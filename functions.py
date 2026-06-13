@@ -39,3 +39,42 @@ while True:
         break
     else:
         print("Invalid choice")
+
+# To do list program
+tasks=[1,2,3,4]
+
+def add_task():
+    add_task= input("Enter Task:")
+    tasks.append(add_task)
+    print("Task added")
+
+
+def remove_task():
+    remove_task = input("Enter the task to remove:")
+    if remove_task in tasks:
+        tasks.remove(remove_task)
+        print("Task Removed")
+    else:
+        print("Invalid Task")
+    
+def list_tasks():
+    for task in tasks:
+        print(task)
+
+while True:
+    print("1.Add Task:")
+    print("2.Remove")
+    print("List tasks")
+    print("4. Exit")
+    choice= input("Enter your choice:")
+
+    if choice == "1":
+        add_task()
+    elif choice == "2":
+        remove_task()
+    elif choice == "3":
+        list_tasks()
+    elif choice == "4":
+        break
+    else:
+        print("invalid input")
