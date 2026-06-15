@@ -1,0 +1,33 @@
+#Multiplication Table
+a= int(input("Enter a number:"))
+for i in range(1,11):
+    print(f"{a} * {i} = {a*i}")
+
+
+#sum of 1-100
+total =0
+for i in range(1,101):
+    total+=i
+print(total)
+
+#FizzBuzz/Fizz/Buzz
+for i in range(1,51):
+    if i % 3  == 0 and i % 5  == 0:
+        print("FizzBuzz")
+    elif i % 3==0:
+        print("Fizz")
+    elif i % 5 == 0:
+        print("Buzz")
+    else:
+        print(i)
+
+#Guessing number Game
+guessing_number=0
+while guessing_number!=6:
+    guessing_number= int(input("Guess the number:"))
+    if guessing_number != 6:
+        print("try again")
+print("You found it")
+
+    
+    
