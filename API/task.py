@@ -1,50 +1,63 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-
-app=FastAPI()
-tasks=[]
+app = FastAPI()
+tasks = []
 
 class Tasks(BaseModel):
-    title: str
+    task_id: int
+    task_name: str
 
-@app.post("/tasks")
-def add_task(task:Tasks):
+
+@app.post("/task")
+def add_task(task: Tasks):
     tasks.append(task)
-    return "Task added Successfully"
+    return {"message": "Task added successfully"}
 
-@app.get("/tasks")
+
+@app.get("/task")
 def get_tasks():
     return tasks
 
-@app.get("/tasks/{id}")
-def get_task(id:int):
-    if id >= len(tasks):
+
+@app.get("/task/{task_id}")
+def get_task(task_id: int):
+    for task in tasks:
+        if task_id == task.task_id:
+            return task
+
+    raise HTTPException(
+        status_code=404,
+        detail="Task not found"
+    )
+
+
+@app.put("/task/{task_id}")
+def update_task(task_id: int, updated_task: Tasks):
+        for index, task in enumerate(tasks):
+            if task_id == task.task_id:
+                tasks[index]= updated_task
+            return {
+                "message": "Task updated successfully",
+                "task": updated_task
+            }
+
         raise HTTPException(
-        status_code = 404,
-        detail = "Task not Found"
-        )
-    return tasks[id]
-
-@app.put("/tasks/{id}")
-def update_task(id:int, task:Tasks):
-    tasks[id]=task
-    if id >= len(tasks):
-        raise HTTPException(
-            status_code =404,
-            detail = "Task not found"
-        )
-    return "Task Updated"
+        status_code=404,
+        detail="Task not found"
+    )
 
 
-@app.delete("/tasks/{id}")
-def delete_task(id:int):
-    tasks.pop(id)
-    if id >= len(tasks):
-        raise HTTPException(
-            status_code= 404,
-            detail="Task not found"
-        )
-    return "Task deleted successfully"
+@app.delete("/task/{task_id}")
+def delete_task(task_id: int):
+    for task in tasks:
+        if task_id == task.task_id:
+            tasks.remove(task)
+            return {
+                "message": "Task deleted successfully",
+                }
 
-
+    raise HTTPException(
+        status_code=404,
+        detail="Task not found"
+    )

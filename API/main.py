@@ -35,3 +35,21 @@ def delete_student(id:int):
     students.pop(id)
     return "Deleted Successfully"
 
+[
+    {
+        "task_id": 101,
+        "task_name": "Learning Html"
+    },
+    {
+        "task_id": 102,
+        "task_name": "Learning Python"
+    },
+    {
+        "task_id": 103,
+        "task_name": "Learning Sql"
+    },
+    {
+        "task_id": 104,
+        "task_name": "Learning Sql"
+    }
+]
