@@ -1,56 +1,67 @@
-from database import engine, Session, Base
-from models import User,Post
-
-Base.metadata.create_all(bind=engine)
-session=Session()
-
-user1=User(name='Bavithra',email='b@gmail.com',age=25)
-user2=User(name='Keerthi', email= 'K@email.com',age=28)
-user3=User(name='Ramya',email='r@gmail.com',age=22)
-user4=User(name='Payal',email='p@gmail.com',age=25)
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+from database import get_db
+from models import Task
+from schemas import TaskCreate, TaskResponse
+from typing import List
 
 
-session.add(user1)
-session.add(user2)
-session.add(user3)
-session.add(user4)
-session.commit()
 
-post1= Post(user_id=1,product= 'python book')
-post2= Post(user_id=2,product= 'Sql Book')
-post3=Post(user_id=4,product='postgres book')
+app=FastAPI()
 
-session.add(post1)
-session.add(post2)
-session.add(post3)
-session.commit()
+@app.get("/")
+def home():
+   return {"message: Fastapi is Running"}
 
-
-users= session.query(User).all()
-for user in users:
-    print(user)
-
-user= session.query(User.id,User.name).all()
-for user in users():
-    print(user.id,user.name)
+@app.post("/tasks", response_model= TaskResponse)
+def add_task(task:TaskCreate, db: Session= Depends(get_db)):
+    new_task = Task(title=task.title)
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+    return new_task
 
 
-user= session.query(User).order_by(User.age).all()
-for user in users:
-    print(user)
-    
-user= session.query(User).filter(User.age>30).all()
-for user in users:
-    print(user)
+@app.get("/tasks", response_model= List[TaskResponse])
+def get_tasks(db: Session= Depends(get_db)):
+    tasks= db.query(Task).all()
+    return tasks
 
-user=session.query(user).filter(User.id==1).first()
-session.delete(user)
-session.commit()
+@app.get("/tasks/{id}", response_model= TaskResponse)
+def get_task(id:int, db: Session= Depends(get_db)):
+    task= db.query(Task).filter(Task.id== id).first()
+    if task is None:
+        raise HTTPException(
+        status_code = 404,
+        detail = "Task not Found"
+        )
+    return task
 
-user = session.query(User).filter_by(email="b@gmail.com").first()
+@app.put("/tasks/{id}", response_model= TaskResponse)
 
-if user:
-    user.age = 27
-    session.commit()
+def update_task(id:int, task: TaskCreate, db: Session= Depends(get_db)):
+
+    existing_task = db.query(Task).filter(Task.id==id).first()
+
+    if existing_task is None:
+        raise HTTPException(
+            status_code =404,
+            detail = "Task not found"
+        )
+    existing_task.title = task.title
+    db.commit()
+    db.refresh(existing_task)
+    return existing_task
 
 
+@app.delete("/tasks/{id}")
+def delete_task(id:int, db: Session= Depends (get_db)):
+    existing_task= db.query(Task).filter(Task.id==id).first()
+    if existing_task is None:
+        raise HTTPException(
+            status_code= 404,
+            detail="Task not found"
+        )
+    db.delete(existing_task)
+    db.commit()
+    return "Task Deleted Successfully"

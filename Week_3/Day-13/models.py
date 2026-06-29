@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from database import Base
 from sqlalchemy.orm import relationship
 
@@ -7,7 +7,7 @@ class User(Base):
     __tablename__ = 'users_orm'
     id    = Column(Integer, primary_key= True)
     name  = Column(String(100), nullable=False)
-    email = Column(String(100), unique=True)
+    email = Column(String(100),unique=True)
     age   = Column(Integer)
    
 
@@ -26,7 +26,16 @@ class Post(Base):
 
     def __repr__(self):
         return f"Post(id={self.id}, product='{self.product}', user_id={self.user_id})"
+    
 
+class Task(Base):
+    __tablename__ = "tasks"
+    id = Column(Integer, primary_key=True)
+    title= Column (String(200), nullable=False)
+    completed= Column(Boolean, default=False)
+
+def __repr__(self):
+    return f"Post(id={self.id}, title='{self.title}', completed={self.completed})"
 
 
 
