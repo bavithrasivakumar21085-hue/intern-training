@@ -31,6 +31,7 @@ async def counter_generator():
             "event": "counter",
             "data": f"Count: {count}" 
         }
+        
         count +=1
         await asyncio.sleep(1)
 
